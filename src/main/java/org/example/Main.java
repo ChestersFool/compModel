@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -9,15 +10,11 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
+        double from = 0;
         double k0;
-        double[] x = new double[100];
-        double[] y = new double[100];
-        double[] h = new double[100];
-        double[] xCorrect = new double[100];
-        double[] yCorrect = new double[100];
-        double[] xDelta = new double[100];
-        double[] yDelta = new double[100];
-        double[] pointsOfT = new double[100];
+        double[] x = new double[10];
+        double[] y = new double[10];
+        double[] h = new double[4];
         x[0] = 1.;
         y[0] = 1.;
 
@@ -28,38 +25,50 @@ public class Main {
         if (k0 <= 0) {
             k0 = 5;
         }
-        // h opt
+        if (h[0] <= 0) {
+            h[0] = 0.1;
+        }
 
-        // t start 0 to 1
-        // ti = t0 + i * h opt
+        produceNRK21(from, k0, x, y, h);
+        // search h opt = min(h) -> recalculate x1,x2,y1,y2
 
-        // find 1,2
+        // ГБРС
+        double hOpt = h[2];
+        int n = (int) (1 / hOpt);
 
-        // xn+1 = xn + h/2 * T2(T1+T2)
-        // yn+1 = yn + h/2 * L2(L1+L2)
-        // T1 = fn+1 = f (tn+1, xn+1, yn+1) = 2x+1 ....
-        // T2 = f(tn,xn+1-h*T1, yn+1 - h*T1) = 2....
+        produceJAN3(from, x, y, hOpt);
 
-        // L1 = gn+1 = x!! + 2....
-        // L2 = g(tn,xn+1-h*L1, yn+1 - h*L1)
+        double[] xCorrect = calculateCorrectX(n, hOpt, from);
+        double[] yCorrect = calculateCorrectY(n, hOpt, from);
 
-        // search x1,x2
+        System.out.println("x: " + Arrays.toString(x));
+        System.out.println("y: " + Arrays.toString(y));
+        System.out.println("xCorrect: " + Arrays.toString(xCorrect));
+        System.out.println("yCorrect: " + Arrays.toString(yCorrect));
+        System.out.print("points: ");
+        for (int i = 0; i < n; i++) {
+            System.out.print((from + i * hOpt) + ", ");
+        }
+    }
 
-        double pointCur = 0;
+    private static void produceNRK21(double from, double k0, double[] x, double[] y, double[] h) {
+        double pointCur = from;
 
-        for (int i = 0; i < 2; i++) {
+        // yn+1 = yn + h/2 * t2(t2 + t1)
+        // t1 = f(tn+1, xn+1, yn+1)
+        // t2 = f(tn, yn+1 - h * t1)
+        for (int i = 0; i < 3; i++) {
 //            System.out.println(h[i]);
             double pointNext = pointCur + h[i];
             double xi1k = x[i];
             double yi1k = y[i];
-            double xi1k1 = 0;
-            double yi1k1 = 0;
+            double xi1k1 = 0; // init
+            double yi1k1 = 0; // init
             int j = 0;
 
             while (j < k0) {
                 double t1 = xFuncDerivative(pointNext, xi1k, yi1k);
                 double t2 = xFuncDerivative(pointCur, xi1k - h[i] * t1, yi1k - h[i] * t1);
-
                 double l1 = yFuncDerivative(pointNext, xi1k, yi1k);
                 double l2 = yFuncDerivative(pointCur, xi1k - h[i] * l1, yi1k - h[i] * l1);
 
@@ -69,8 +78,8 @@ public class Main {
                 yi1k1 = y[i] + h[i] / 2 * l2 * (l1 + l2);
 
 //                System.out.println(i);
-                System.out.println("xi1k1: " + xi1k1 + "; yi1k1: " + yi1k1);
-                System.out.println("xi1k1c: " + xFuncCorrect(pointNext) + "; yi1k1c: " + yFuncCorrect(pointNext));
+//                System.out.println("xi1k1: " + xi1k1 + "; yi1k1: " + yi1k1);
+//                System.out.println("xi1k1c: " + xFuncCorrect(pointNext) + "; yi1k1c: " + yFuncCorrect(pointNext));
 
                 if (Math.abs(xi1k1 - xi1k) + Math.abs(yi1k1 - yi1k) <= eps) {
                     break;
@@ -78,9 +87,8 @@ public class Main {
 
                 xi1k = xi1k1;
                 yi1k = yi1k1;
-
                 j++;
-            } //while (Math.abs()); //|x1k+1 - x1k| + |y1k+1-y1k| <= eps then x1 = x1k1+1 && k < k0
+            }
 
             if (j == k0) {
                 h[i] /= 2;
@@ -92,18 +100,32 @@ public class Main {
             y[i + 1] = yi1k1;
             h[i + 1] = h[i];
             pointCur = pointNext;
-            /// IF |x1k+1 - x1k| + |y1k+1-y1k| <= eps then x1 = x1k1+1
-            /// else k = k+1
-            /// if k0 iterr -> hi/2
-
-            /// заст метод простої ітерації
-            /// Нехай х1 = х0, у1 = у0 або х0 + хаш * ф0
         }
+    }
 
-        // search h opt = min(h) -> recalculate x1,x2,y1,y2
+    public static void produceJAN3(double from, double[] x, double[] y, double hOpt) {
+        double pointCur = from + 3 * hOpt;
+        int n = (int) (1 / hOpt);
 
-        // ГБРС
-        // xn+3 = xn+1 + hopt/3 ( 7 * fn+2 - 2 fn+1 + fn)
+        for (int i = 3; i < n; i++) {
+            double pointNext = pointCur + hOpt;
+            // yn+3 = yn+1 + h/3 * (7 * f(xn+1, yn+1) - 2 * f(xn, yn) + f(xn-1, yn-1))
+            x[i] = x[i - 2] + hOpt / 3 * (7 * xFuncDerivative(pointNext, x[i - 1], y[i - 1]) -
+                    2 * xFuncDerivative(pointCur, x[i - 2], y[i - 2]) +
+                    xFuncDerivative(pointCur, x[i - 3], y[i - 3]));
+            y[i] = y[i - 2] + hOpt / 3 * (7 * yFuncDerivative(pointNext, x[i - 1], y[i - 1]) -
+                    2 * yFuncDerivative(pointCur, x[i - 2], y[i - 2]) +
+                    yFuncDerivative(pointCur, x[i - 3], y[i - 3]));
+            pointCur = pointNext;
+        }
+    }
+
+    public static double xFuncDerivative(double t, double x, double y) {
+        return t / y;
+    }
+
+    public static double yFuncDerivative(double t, double x, double y) {
+        return t / x;
     }
 
     public static double xFuncCorrect(double t) {
@@ -114,11 +136,23 @@ public class Main {
         return Math.exp(-(Math.pow(t, 2) / 2));
     }
 
-    public static double xFuncDerivative(double t, double x, double y) {
-        return t / y;
+    private static double[] calculateCorrectX(int n, double h, double from) {
+        double[] xCorrect = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            xCorrect[i] = xFuncCorrect(i * h + from);
+        }
+
+        return xCorrect;
     }
 
-    public static double yFuncDerivative(double t, double x, double y) {
-        return t / x;
+    private static double[] calculateCorrectY(int n, double h, double from) {
+        double[] yCorrect = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            yCorrect[i] = yFuncCorrect(i * h + from);
+        }
+
+        return yCorrect;
     }
 }
