@@ -90,9 +90,9 @@ public class Main {
                 xi1k1 = x[i] + h[i] / 2 * t2 * (t1 + t2); // x1k+1 = ...
                 yi1k1 = y[i] + h[i] / 2 * l2 * (l1 + l2);
 
-                System.out.println(j);
-                System.out.println("xi1k1: " + xi1k1 + "; yi1k1: " + yi1k1);
-                System.out.println("xi1k: " + xi1k + "; yi1k: " + yi1k);
+//                System.out.println(j);
+//                System.out.println("xi1k1: " + xi1k1 + "; yi1k1: " + yi1k1);
+//                System.out.println("xi1k: " + xi1k + "; yi1k: " + yi1k);
 //                System.out.println("xi1k1c: " + xFuncCorrect(pointNext) + "; yi1k1c: " + yFuncCorrect(pointNext));
 
                 if (Math.abs(xi1k1 - xi1k) + Math.abs(yi1k1 - yi1k) <= eps) {
@@ -112,6 +112,7 @@ public class Main {
 
 //            x.add(i+1,xi1k1 );
 //            y.add(i+1, yi1k1);
+            System.out.println("ADddingg " + (i+1) + " " + xi1k1);
             x[i + 1] = xi1k1;
             y[i + 1] = yi1k1;
             h[i + 1] = h[i];
