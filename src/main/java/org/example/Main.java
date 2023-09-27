@@ -133,12 +133,14 @@ public class Main {
 
         for (int i = 3; i < n; i++) {
             double pointNext = pointCur + hOpt;
-            // yn+3 = yn+1 + h/3 * (7 * f(xn+1, yn+1) - 2 * f(xn, yn) + f(xn-1, yn-1))
-            double xi = x.get(i - 2) + hOpt / 3 * (7 * xFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
+            // yn+3 = yn+1 + h/3 * (7 * f(xn+2, yn+2) - 2 * f(xn+1, yn+1) + f(xn, yn))
+            double xi = x.get(i - 2) + hOpt / 3 *
+                    (7 * xFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
                     2 * xFuncDerivative(pointCur, x.get(i - 2), y.get(i - 2)) +
                     xFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3)));
             x.add(xi);
-            double yi = y.get(i - 2) + hOpt / 3 * (7 * yFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
+            double yi = y.get(i - 2) + hOpt / 3 *
+                    (7 * yFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
                     2 * yFuncDerivative(pointCur, x.get(i - 2), y.get(i - 2)) +
                     yFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3)));
             y.add(yi);
