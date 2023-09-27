@@ -13,15 +13,11 @@ public class Main {
 
         double from = 0;
         double k0;
+        double[] h = new double[4];
         ArrayList<Double> x = new ArrayList<>(20);
         ArrayList<Double> y = new ArrayList<>(20);
-//        double[] x = new double[1000];
-//        double[] y = new double[1000];
-        double[] h = new double[4];
         x.add(1.);
         y.add(1.);
-//        x[0] = 1.;
-//        y[0] = 1.;
 
         System.out.println("Enter step, k0: ");
         h[0] = sc.nextDouble();
@@ -40,7 +36,7 @@ public class Main {
         while (h[0] != hOpt) {
 //            System.out.println("h0,h1,h2: " + h[0] + " " + h[1] + " " + h[2]);
 //            System.out.println("hOpt: " + hOpt);
-//            System.out.println("RETRY");
+            System.out.println("RETRY");
             h[0] = h[2];
             produceNRK21(from, k0, x, y, h);
         }
@@ -76,12 +72,12 @@ public class Main {
         y.clear();
         y.add(temp);
 
-        System.out.println(x);
-        System.out.println(y);
+//        System.out.println(x);
+//        System.out.println(y);
         // yn+1 = yn + h/2 * t2(t2 + t1)
         // t1 = f(tn+1, xn+1, yn+1)
         // t2 = f(tn, yn+1 - h * t1)
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
 //            System.out.println(h[i]);
             double pointNext = pointCur + h[i];
             double xi1k = x.get(i);
@@ -121,11 +117,9 @@ public class Main {
                 continue;
             }
 
-            System.out.println("ADddingg " + (i+1) + " " + xi1k1);
+            System.out.println("ADddingg " + (i + 1) + " " + xi1k1);
             x.add(xi1k1);
             y.add(yi1k1);
-//            x[i + 1] = xi1k1;
-//            y[i + 1] = yi1k1;
             h[i + 1] = h[i];
             pointCur = pointNext;
         }
@@ -138,18 +132,21 @@ public class Main {
         double pointCur = from + 3 * hOpt;
         int n = (int) (1 / hOpt);
 
+//        x.remove(3);
+//        y.remove(3);
+
         for (int i = 3; i < n; i++) {
             double pointNext = pointCur + hOpt;
             // yn+3 = yn+1 + h/3 * (7 * f(xn+2, yn+2) - 2 * f(xn+1, yn+1) + f(xn, yn))
             double xi = x.get(i - 2) + hOpt / 3 *
                     (7 * xFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
-                    2 * xFuncDerivative(pointCur, x.get(i - 2), y.get(i - 2)) +
-                    xFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3)));
+                            2 * xFuncDerivative(pointCur, x.get(i - 2), y.get(i - 2)) +
+                            xFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3)));
             x.add(xi);
             double yi = y.get(i - 2) + hOpt / 3 *
                     (7 * yFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
-                    2 * yFuncDerivative(pointCur, x.get(i - 2), y.get(i - 2)) +
-                    yFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3)));
+                            2 * yFuncDerivative(pointCur, x.get(i - 2), y.get(i - 2)) +
+                            yFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3)));
             y.add(yi);
             pointCur = pointNext;
         }
