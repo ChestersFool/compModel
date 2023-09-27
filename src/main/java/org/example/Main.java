@@ -46,6 +46,7 @@ public class Main {
         }
 
         // ГБРС
+
         System.out.println("hOpt: " + hOpt);
         int n = (int) (1 / hOpt);
 
@@ -75,6 +76,8 @@ public class Main {
         y.clear();
         y.add(temp);
 
+        System.out.println(x);
+        System.out.println(y);
         // yn+1 = yn + h/2 * t2(t2 + t1)
         // t1 = f(tn+1, xn+1, yn+1)
         // t2 = f(tn, yn+1 - h * t1)
@@ -118,6 +121,7 @@ public class Main {
                 continue;
             }
 
+            System.out.println("ADddingg " + (i+1) + " " + xi1k1);
             x.add(xi1k1);
             y.add(yi1k1);
 //            x[i + 1] = xi1k1;
@@ -125,6 +129,9 @@ public class Main {
             h[i + 1] = h[i];
             pointCur = pointNext;
         }
+
+        System.out.println(x);
+        System.out.println(y);
     }
 
     public static void produceJAN3(double from, ArrayList<Double> x, ArrayList<Double> y, double hOpt) {
