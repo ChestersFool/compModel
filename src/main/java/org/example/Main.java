@@ -17,7 +17,7 @@ public class Main {
         ArrayList<Double> y = new ArrayList<>(20);
 //        double[] x = new double[1000];
 //        double[] y = new double[1000];
-        double[] h = new double[400];
+        double[] h = new double[4];
         x.add(1.);
         y.add(1.);
 //        x[0] = 1.;
@@ -38,9 +38,9 @@ public class Main {
         double hOpt = h[2];
 
         while (h[0] != hOpt) {
-            System.out.println("h0,h1,h2: " + h[0] + " " + h[1] + " " + h[2]);
-            System.out.println("hOpt: " + hOpt);
-            System.out.println("RETRY");
+//            System.out.println("h0,h1,h2: " + h[0] + " " + h[1] + " " + h[2]);
+//            System.out.println("hOpt: " + hOpt);
+//            System.out.println("RETRY");
             h[0] = h[2];
             produceNRK21(from, k0, x, y, h);
         }
@@ -134,12 +134,14 @@ public class Main {
         for (int i = 3; i < n; i++) {
             double pointNext = pointCur + hOpt;
             // yn+3 = yn+1 + h/3 * (7 * f(xn+1, yn+1) - 2 * f(xn, yn) + f(xn-1, yn-1))
-            x.add(x.get(i - 2) + hOpt / 3 * (7 * xFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
+            double xi = x.get(i - 2) + hOpt / 3 * (7 * xFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
                     2 * xFuncDerivative(pointCur, x.get(i - 2), y.get(i - 2)) +
-                    xFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3))));
-            y.add(y.get(i - 2) + hOpt / 3 * (7 * yFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
+                    xFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3)));
+            x.add(xi);
+            double yi = y.get(i - 2) + hOpt / 3 * (7 * yFuncDerivative(pointNext, x.get(i - 1), y.get(i - 1)) -
                     2 * yFuncDerivative(pointCur, x.get(i - 2), y.get(i - 2)) +
-                    yFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3))));
+                    yFuncDerivative(pointCur, x.get(i - 3), y.get(i - 3)));
+            y.add(yi);
             pointCur = pointNext;
         }
     }
