@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static final double eps = 0.00001;
+    public static double eps;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -19,9 +19,10 @@ public class Main {
         x.add(1.);
         y.add(1.);
 
-        System.out.println("Enter step, k0: ");
+        System.out.println("Enter step, k0, eps: ");
         h[0] = sc.nextDouble();
         k0 = sc.nextDouble();
+        eps = sc.nextDouble();
 
         if (k0 <= 0) {
             k0 = 5;
@@ -72,13 +73,10 @@ public class Main {
         y.clear();
         y.add(temp);
 
-//        System.out.println(x);
-//        System.out.println(y);
         // yn+1 = yn + h/2 * t2(t2 + t1)
         // t1 = f(tn+1, xn+1, yn+1)
         // t2 = f(tn, yn+1 - h * t1)
         for (int i = 0; i < 2; i++) {
-//            System.out.println(h[i]);
             double pointNext = pointCur + h[i];
             double xi1k = x.get(i);
             double yi1k = y.get(i);
@@ -92,15 +90,8 @@ public class Main {
                 double l1 = yFuncDerivative(pointNext, xi1k, yi1k);
                 double l2 = yFuncDerivative(pointCur, xi1k - h[i] * l1, yi1k - h[i] * l1);
 
-//                System.out.println(t1 + " " + t2 + " " + l1 + " " + l2);
-
                 xi1k1 = x.get(i) + h[i] / 2 * t2 * (t1 + t2); // x1k+1 = ...
                 yi1k1 = y.get(i) + h[i] / 2 * l2 * (l1 + l2);
-
-//                System.out.println(j);
-//                System.out.println("xi1k1: " + xi1k1 + "; yi1k1: " + yi1k1);
-//                System.out.println("xi1k: " + xi1k + "; yi1k: " + yi1k);
-//                System.out.println("xi1k1c: " + xFuncCorrect(pointNext) + "; yi1k1c: " + yFuncCorrect(pointNext));
 
                 if (Math.abs(xi1k1 - xi1k) + Math.abs(yi1k1 - yi1k) <= eps) {
                     break;
@@ -117,23 +108,17 @@ public class Main {
                 continue;
             }
 
-            System.out.println("ADddingg " + (i + 1) + " " + xi1k1);
             x.add(xi1k1);
             y.add(yi1k1);
             h[i + 1] = h[i];
             pointCur = pointNext;
         }
 
-        System.out.println(x);
-        System.out.println(y);
     }
 
     public static void produceJAN3(double from, ArrayList<Double> x, ArrayList<Double> y, double hOpt) {
         double pointCur = from + 3 * hOpt;
         int n = (int) (1 / hOpt);
-
-//        x.remove(3);
-//        y.remove(3);
 
         for (int i = 3; i < n; i++) {
             double pointNext = pointCur + hOpt;
