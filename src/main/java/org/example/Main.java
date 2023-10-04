@@ -113,7 +113,6 @@ public class Main {
             h[i + 1] = h[i];
             pointCur = pointNext;
         }
-
     }
 
     public static void produceJAN3(double from, ArrayList<Double> x, ArrayList<Double> y, double hOpt) {
