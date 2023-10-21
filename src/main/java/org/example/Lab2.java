@@ -27,12 +27,12 @@ public class Lab2 extends JFrame {
     }
 
     private double v(double etta) {
-        return (fi2(etta) * fi3(etta) + fi1(etta) * fi4(etta)) /
+        return (fi2(etta) * fi3(etta) - fi1(etta) * fi4(etta)) /
                 (Math.pow(fi3(etta), 2) + Math.pow(fi4(etta), 2));
     }
 
     public void calculate() {
-        int n = 2000;
+        int n = 1000;
         double h = 2 * Math.PI / n;
 
         for (int i = 0; i < n; i++) {
