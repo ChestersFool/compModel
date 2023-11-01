@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.awt.*;
 
 public class Lab2 extends JFrame {
+    private final static double scale = 200;
+
     private double fi1(double etta) {
         return 3 * Math.cos(etta) - 3 * Math.cos(3 * etta);
     }
@@ -70,15 +72,15 @@ public class Lab2 extends JFrame {
         int i = 0;
 
         for (Double aDouble : ettaArray) {
-            int x = (int) (uArray.get(i) * 200 + this.getWidth() / 2);
-            int y = (int) (vArray.get(i) * 200 + this.getHeight() / 2);
-            System.out.println(x + " " + y);
+            int x = (int) (uArray.get(i) * scale + this.getWidth() / 2);
+            int y = (int) (vArray.get(i) * scale + this.getHeight() / 2);
+//            System.out.println(x + " " + y);
             g2d.setPaint(Color.BLACK);
             g2d.fillOval(x - 1, y - 1, 3, 3);
 
-            x = (int) (roArray.get(i) * 200 + this.getWidth() / 2);
+            x = (int) (roArray.get(i) * scale + this.getWidth() / 2);
             g2d.setPaint(Color.RED);
-            g2d.fillOval(x - 1, this.getHeight() / 2 - 1, 3,  3);
+            g2d.fillOval(x - 1, this.getHeight() / 2 - 1, 3, 3);
 
             i++;
         }
