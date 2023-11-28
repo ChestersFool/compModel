@@ -1,45 +1,54 @@
 package org.example;
 
-import java.util.Scanner;
-
 public class Lab4 {
 
-    public static double func(double y, double t, double h, double eps, double beleberda) {
-        return y + t / (eps * beleberda / h + 1 / 2.);
-    }
-
     public static double correctFunc(double y, double t, double h, double eps) {
-        double pow = -t / eps;
+        double pow = t / eps;
         if (pow < 10) {
-            return t - eps + (1 + eps) * Math.exp(pow);
+            return t - eps + (1 + eps) * Math.exp(-pow);
         }
         return t - eps;
     }
 
-    public static double beleberda(double beleberda2) {
-        return (beleberda2 * (1 / Math.tan(beleberda2 / 2))) / 2;
+    public static double func(double y, double t, double h, double eps, double sigma) {
+        return t / (eps * sigma / h - 1 / 2.) + y;
+    }
+
+    public static double sigma(double ro) {
+        return (ro * ctg(ro / 2.)) / 2.;
+    }
+
+    public static double ctg(double x) {
+        return 1. / Math.tan(x);
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        double t = 0;
+        double eps = 0.01;
+        calc(eps, eps, false);
+    }
 
-        System.out.println("Enter eps, h: ");
-        double eps = sc.nextDouble();
-        double h = sc.nextDouble();
+    public static void calc(double eps, double h, boolean toCalcSigma) {
+        double t = 0;
         int n = (int) (1 / h) + 1;
         double[] y = new double[n];
         y[0] = 1;
-        double beleberda2 = h / eps;
+        double sigma;
+
+        if (toCalcSigma) {
+            sigma = sigma(h / eps);
+        } else {
+            sigma = 1;
+        }
 
         System.out.println("y\t\tcorr\tdelta\tt");
         for (int i = 1; i < n; i++) {
             t += h;
-            y[i] = func(y[i - 1], t, h, eps, beleberda2);
+            y[i] = func(y[i - 1], t, h, eps, sigma);
+            double correct = correctFunc(y[i - 1], t, h, eps);
 
             System.out.println(String.format("%.3f", y[i]) + "\t" +
-                    String.format("%.3f", correctFunc(y[i - 1], t, h, eps)) + "\t" +
-                    String.format("%.3f", (y[i] - correctFunc(y[i - 1], t, h, eps))) + "\t" +
+                    String.format("%.3f", correct) + "\t" +
+                    String.format("%.3f", (y[i] - correct)) + "\t" +
                     String.format("%.3f", t));
         }
     }
